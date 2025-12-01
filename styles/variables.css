@@ -1,0 +1,20 @@
+:root {
+    --primary-color: #2D6A4F;
+    --black: #081C15;
+    --dark-accent: #1B4332;
+    --white: #ebedeb;
+    --light-accent: #c9ddcc;
+    --background-color: #D8F3DC;
+
+    --tile_2: #B7E4C7;
+    --tile_4: #99d2ad;
+    --tile_8: #95D5B2;
+    --tile_16: #78bd97;
+    --tile_32: #74C69D;
+    --tile_64: #60ba8d;
+    --tile_128: #52B788;
+    --tile_256: #439b72;
+    --tile_512: #40916C;
+    --tile_1024: #2D6A4F;
+    --tile_2048: #245b44;
+}

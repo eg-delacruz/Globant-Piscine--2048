@@ -1,0 +1,14 @@
+version: '3.8' # docker-compose version
+
+services:
+  2048-game: # Service name
+    build: . # Look for a Dockerfile in the current directory
+    container_name: 2048-game-container
+    ports:
+      - "2048:80"
+    restart: always # Optional: ensure the container restarts if it fails
+    volumes:
+      # Mount the current directory (game files) into the Nginx web directory inside the container.
+      # during development: any change to the game files will instantly
+      # be reflected in the running container (may need to refresh the browser).
+      - .:/usr/share/nginx/html:ro
