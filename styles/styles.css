@@ -1,137 +1,171 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    background-color: var(--background-color);
-    height: 100%;
-    color: var(--black);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.game-container {
-    padding-bottom: 200px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  height: 100%;
+  color: var(--black);
+  display: flex;
+  justify-content: center;
+  height: 100vh;
 }
 
 h1 {
-    font-size: 100px;
-    margin: 0;
+  font-size: 100px;
+  margin: 0;
+  margin-top: 8px;
 }
 
 .score-container {
-    padding: 16px 4px;
-    border-radius: 6px;
-    width: 100%;
-    margin: 0 auto;
-    background-color: var(--primary-color);
-    max-width: 350px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 4px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px 4px;
+  border-radius: 6px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: var(--primary-color);
+  max-width: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .score-container span {
-    font-size: 24px;
-    color: var(--white);
+  font-size: 24px;
+  color: var(--white);
 }
 
 .score-container button {
-    padding: 8px 16px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    background-color: var(--dark-accent);
-    color: var(--white);
-    cursor: pointer;
+  padding: 8px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--dark-accent);
+  color: var(--white);
+  cursor: pointer;
 }
 
 .game-grid {
-    padding-top: 30px;
+  padding-top: 30px;
 }
 
 .grid-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 60px;
 }
 
 .grid-container {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(4, 80px);
-    grid-auto-rows: 80px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, 80px);
+  grid-auto-rows: 80px;
 }
 
 .tile {
-    border: 6px solid black;
-    background-color: var(--tile_2);
-    border-radius: 6px;
-    font-size: 32px;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+  border: 6px solid black;
+  background-color: var(--tile_2);
+  border-radius: 6px;
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .tile[data-value="0"] {
-    background-color: var(--light-accent);
-    border: none;
+  background-color: var(--light-accent);
+  border: none;
 }
 
 .tile[data-value="2"] {
-    background-color: var(--tile_2);
+  background-color: var(--tile_2);
 }
 
 .tile[data-value="4"] {
-    background-color: var(--tile_4);
+  background-color: var(--tile_4);
 }
 
 .tile[data-value="8"] {
-    background-color: var(--tile_8);
+  background-color: var(--tile_8);
 }
 
 .tile[data-value="16"] {
-    background-color: var(--tile_16);
+  background-color: var(--tile_16);
 }
 
 .tile[data-value="32"] {
-    background-color: var(--tile_32);
+  background-color: var(--tile_32);
 }
 
 .tile[data-value="64"] {
-    background-color: var(--tile_64);
+  background-color: var(--tile_64);
 }
 
 .tile[data-value="128"] {
-    background-color: var(--tile_128);
+  background-color: var(--tile_128);
 }
 
 .tile[data-value="256"] {
-    background-color: var(--tile_256);
-    color: var(--white);
+  background-color: var(--tile_256);
+  color: var(--white);
 }
 
 .tile[data-value="512"] {
-    background-color: var(--tile_512);
-    color: var(--white);
+  background-color: var(--tile_512);
+  color: var(--white);
 }
 
 .tile[data-value="1024"] {
-    background-color: var(--tile_1024);
-    color: var(--white);
-    font-size: 24px;
+  background-color: var(--tile_1024);
+  color: var(--white);
+  font-size: 24px;
 }
 
 .tile[data-value="2048"] {
-    background-color: var(--tile_2048);
-    color: var(--white);
-    font-size: 24px;
+  background-color: var(--tile_2048);
+  color: var(--white);
+  font-size: 24px;
+}
+
+.game_over_container {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.game_over_container.show {
+  display: flex;
+}
+
+.game_over_wrapper {
+  background-color: var(--white);
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+#restart-btn-2 {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--dark-accent);
+  color: var(--white);
+  cursor: pointer;
 }

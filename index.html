@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2048 Game</title>
-    <link rel="stylesheet" href="./styles/variables.css">
-    <link rel="stylesheet" href="./styles/normalize.css">
-    <link rel="stylesheet" href="./styles/styles.css">
-</head>
+    <link rel="stylesheet" href="./styles/variables.css" />
+    <link rel="stylesheet" href="./styles/normalize.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+  </head>
 
-<body>
+  <body>
     <div class="game-container">
-        <h1>2048</h1>
+      <h1>2048</h1>
 
-        <div class="score-container">
-            <span>Score: <span id="score">0</span></span>
-            <button id="restart-btn">Restart</button>
+      <div class="score-container">
+        <span>Score: <span id="score">0</span></span>
+        <button id="restart-btn">Restart</button>
+      </div>
+
+      <section class="game-grid">
+        <div class="grid-wrapper">
+          <div class="grid-container" id="grid-container">
+            <!-- The grid will be filled by JavaScript -->
+          </div>
         </div>
-
-        <section class="game-grid">
-            <div class="grid-wrapper">
-                <div class="grid-container" id="grid-container">
-                    <!-- The grid will be filled by JavaScript -->
-                </div>
-            </div>
-        </section>
+      </section>
+      <div class="game_over_container">
+        <div class="game_over_wrapper">
+          <p>Game over 😔</p>
+          <div>
+            <span>You scored: <span id="final-score">0</span></span>
+          </div>
+          <button id="restart-btn-2">Try Again</button>
+        </div>
+      </div>
     </div>
     <script type="module" src="./scripts/script.js"></script>
-</body>
-
+  </body>
 </html>

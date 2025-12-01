@@ -1,15 +1,26 @@
-import { printGrid, generateTile, handleKeyDown } from './game.js';
+import { printGrid, generateTile, handleKeyDown, restartGame } from "./game.js";
 
-const board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+const board = [
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+];
+
+let state = { score: 0, gameOver: false };
 
 generateTile(board);
 generateTile(board);
 
-printGrid(board);
+printGrid(board, state.score);
 
 // Event listeners
-document.addEventListener("keydown", event => handleKeyDown(event, board));
+document.addEventListener("keydown", (event) =>
+  handleKeyDown(event, board, state)
+);
 
-// TODO: how often should I add a new tile during each iteration?
+const reset_btn = document.getElementById("restart-btn");
+reset_btn.addEventListener("click", () => restartGame(board, state));
 
-// console.log(board);
+const reset_btn_2 = document.getElementById("restart-btn-2");
+reset_btn_2.addEventListener("click", () => restartGame(board, state));
