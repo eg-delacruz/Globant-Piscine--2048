@@ -41,7 +41,6 @@ export const printGrid = (board, score) => {
     for (let j = 0; j < GRID_WIDTH; ++j) {
       if (board[i][j].value === 0) continue;
       const div = document.createElement("div");
-      div.id = `tile_${i}_${j}`;
       div.className = "tile";
       grid_container.append(div);
       div.setAttribute("data-value", board[i][j].value);
@@ -98,34 +97,46 @@ export const restartGame = (board, state) => {
 };
 
 // Row should go from where the move starts
-const compressRow = (row) => {
+const compressRow = (row, rowIndex) => {
   const non_zeros = [];
-  const zeros = []; //I could count how many zeros I still have if needed in the future
 
   for (let i = 0; i < row.length; ++i) {
-    if (row[i].value != 0) non_zeros.push(row[i]);
-    else zeros.push(row[i]);
+    if (row[i].value !== 0) {
+      const tileObject = row[i];
+      tileObject.previousPos = { r: rowIndex, c: i };
+
+      non_zeros.push(tileObject);
+    }
   }
 
-  for (let j = 0; j < non_zeros.length; ++j) row[j] = non_zeros[j];
+  for (let j = 0; j < non_zeros.length; ++j) {
+    row[j] = non_zeros[j];
+  }
 
-  for (let k = non_zeros.length; k < row.length; k++)
+  for (let k = non_zeros.length; k < row.length; k++) {
     row[k] = createEmptyTile();
+  }
 };
 
-const mergeRow = (row, state) => {
-  compressRow(row);
+const mergeRow = (row, state, rowIndex) => {
+  compressRow(row, rowIndex);
 
   for (let i = 0; i < row.length - 1; i++) {
     if (row[i].value !== 0 && row[i].value === row[i + 1].value) {
+      row[i].mergedFrom = [
+        { id: row[i].id, previousPos: row[i].previousPos },
+        { id: row[i + 1].id, previousPos: row[i + 1].previousPos },
+      ];
+
       row[i].value *= 2;
       state.score += row[i + 1].value;
       row[i + 1] = createEmptyTile();
+
       i++; // skip next cell
     }
   }
 
-  compressRow(row);
+  compressRow(row, rowIndex);
 };
 
 const canMerge = (board) => {
@@ -158,16 +169,7 @@ const checkGameOver = (board, state) => {
   if (isBoardFull && !canMerge(board)) state.gameOver = true;
 };
 
-// Used to add new top and left moves before printing the grid
-// const compareBoards = (board1, board2) => {
-//   for (let i = 0; i < GRID_HEIGHT; ++i) {
-//     for (let j = 0; j < GRID_WIDTH; ++j) {
-//       if (board1[i][j] !== board2[i][j]) {
-//       }
-//     }
-//   }
-// };
-
+// TODO: where should I update the isNew flag to false after rendering?
 export const handleKeyDown = (event, board, state) => {
   const { key } = event;
 
@@ -181,13 +183,10 @@ export const handleKeyDown = (event, board, state) => {
   )
     return;
 
-  // Deep copy TODO: erase if not needed
-  // const boardCopy = board.map((row) => row.slice());
-
   if (key == "ArrowUp") {
     transposeMatrix(board);
 
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state);
+    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
 
     transposeMatrix(board);
   } else if (key == "ArrowDown") {
@@ -197,7 +196,7 @@ export const handleKeyDown = (event, board, state) => {
     // Mirror matrix
     mirrorMatrix(board);
 
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state);
+    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
 
     // Mirror matrix back
     mirrorMatrix(board);
@@ -205,18 +204,20 @@ export const handleKeyDown = (event, board, state) => {
     // Transpose matrix back
     transposeMatrix(board);
   } else if (key == "ArrowLeft") {
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state);
+    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
   } else if (key == "ArrowRight") {
     // Mirror matrix
     mirrorMatrix(board);
 
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state);
+    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
 
     // Mirror matrix back
     mirrorMatrix(board);
   }
 
   generateTile(board);
+
+  console.log(board);
   printGrid(board, state.score);
   checkGameOver(board, state);
   if (state.gameOver) printGameOver(state.score);

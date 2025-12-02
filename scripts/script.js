@@ -8,13 +8,6 @@ import {
 
 import { GRID_HEIGHT, GRID_WIDTH } from "./variables.js";
 
-// const board = [
-//   [2, 2, 2, 2],
-//   [2, 2, 2, 2],
-//   [2, 0, 0, 2],
-//   [0, 0, 2, 2],
-// ];
-
 // Instead of having numbers in the matrix, each element should be a tile object like: [
 //   {value: 2, id: 'A', previousPos: {r: 0, c: 0}, mergedFrom: null},
 //   {value: 4, id: 'B', previousPos: {r: 0, c: 2}, mergedFrom: null},
@@ -32,6 +25,8 @@ generateTile(board);
 generateTile(board);
 
 printGrid(board, state.score);
+
+console.log("Board before: ", board);
 
 // Event listeners
 document.addEventListener("keydown", (event) =>
