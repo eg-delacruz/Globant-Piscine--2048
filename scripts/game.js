@@ -1,6 +1,14 @@
 import { GRID_HEIGHT, GRID_WIDTH, CELL_SIZE, GAP_SIZE } from "./variables.js";
 import { getRandomArrElem, mirrorMatrix, transposeMatrix } from "./utils.js";
 
+export const createEmptyTile = () => ({
+  value: 0,
+  id: null, // Empty tiles don't need a unique ID
+  previousPos: null,
+  mergedFrom: null,
+  isNew: false, // Useful flag for rendering
+});
+
 const setTilePosition = (tile, row, col) => {
   const x = col * (CELL_SIZE + GAP_SIZE);
   const y = row * (CELL_SIZE + GAP_SIZE);
@@ -31,14 +39,14 @@ export const printGrid = (board, score) => {
   // Render tiles with values
   for (let i = 0; i < GRID_HEIGHT; ++i) {
     for (let j = 0; j < GRID_WIDTH; ++j) {
-      if (board[i][j] === 0) continue;
+      if (board[i][j].value === 0) continue;
       const div = document.createElement("div");
       div.id = `tile_${i}_${j}`;
       div.className = "tile";
       grid_container.append(div);
-      div.setAttribute("data-value", board[i][j]);
+      div.setAttribute("data-value", board[i][j].value);
       setTilePosition(div, i, j);
-      if (board[i][j] != 0) div.textContent = board[i][j];
+      if (board[i][j].value != 0) div.textContent = board[i][j].value;
       else div.textContent = "";
     }
   }
@@ -57,20 +65,27 @@ export const generateTile = (board) => {
 
   for (let i = 0; i < GRID_HEIGHT; ++i) {
     for (let j = 0; j < GRID_WIDTH; ++j) {
-      if (board[i][j] == 0) empty_cells.push([i, j]);
+      if (board[i][j].value == 0) empty_cells.push([i, j]);
     }
   }
 
   if (empty_cells.length > 0) {
     const random_cell = getRandomArrElem(empty_cells);
-    board[random_cell[0]][random_cell[1]] = Math.random() < 0.9 ? 2 : 4;
+    const value = Math.random() < 0.9 ? 2 : 4;
+    board[random_cell[0]][random_cell[1]] = {
+      value: value,
+      id: `tile_${Date.now()}`, // Unique ID based on timestamp
+      previousPos: null,
+      mergedFrom: null,
+      isNew: true,
+    };
   }
 };
 
 export const restartGame = (board, state) => {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      board[i][j] = 0;
+      board[i][j].value = 0;
     }
   }
   state.score = 0;
@@ -88,23 +103,24 @@ const compressRow = (row) => {
   const zeros = []; //I could count how many zeros I still have if needed in the future
 
   for (let i = 0; i < row.length; ++i) {
-    if (row[i] != 0) non_zeros.push(row[i]);
-    else zeros.push(0);
+    if (row[i].value != 0) non_zeros.push(row[i]);
+    else zeros.push(row[i]);
   }
 
   for (let j = 0; j < non_zeros.length; ++j) row[j] = non_zeros[j];
 
-  for (let k = non_zeros.length; k < row.length; k++) row[k] = 0;
+  for (let k = non_zeros.length; k < row.length; k++)
+    row[k] = createEmptyTile();
 };
 
 const mergeRow = (row, state) => {
   compressRow(row);
 
   for (let i = 0; i < row.length - 1; i++) {
-    if (row[i] !== 0 && row[i] === row[i + 1]) {
-      row[i] *= 2;
-      state.score += row[i + 1];
-      row[i + 1] = 0;
+    if (row[i].value !== 0 && row[i].value === row[i + 1].value) {
+      row[i].value *= 2;
+      state.score += row[i + 1].value;
+      row[i + 1] = createEmptyTile();
       i++; // skip next cell
     }
   }
@@ -118,13 +134,13 @@ const canMerge = (board) => {
       const current = board[i][j];
 
       // Check right neighbor
-      if (j + 1 < GRID_WIDTH && board[i][j + 1] === current) return true;
+      if (j + 1 < GRID_WIDTH && board[i][j + 1] === current.value) return true;
       // Check down neighbor
-      if (i + 1 < GRID_HEIGHT && board[i + 1][j] === current) return true;
+      if (i + 1 < GRID_HEIGHT && board[i + 1][j] === current.value) return true;
       // Check left neighbor
-      if (j - 1 >= 0 && board[i][j - 1] === current) return true;
+      if (j - 1 >= 0 && board[i][j - 1] === current.value) return true;
       // Check up neighbor
-      if (i - 1 >= 0 && board[i - 1][j] === current) return true;
+      if (i - 1 >= 0 && board[i - 1][j] === current.value) return true;
     }
   }
   return false;
@@ -135,12 +151,22 @@ const checkGameOver = (board, state) => {
 
   for (let i = 0; i < GRID_HEIGHT; ++i) {
     for (let j = 0; j < GRID_HEIGHT; ++j) {
-      if (board[i][j] === 0) isBoardFull = false;
+      if (board[i][j].value === 0) isBoardFull = false;
     }
   }
 
   if (isBoardFull && !canMerge(board)) state.gameOver = true;
 };
+
+// Used to add new top and left moves before printing the grid
+// const compareBoards = (board1, board2) => {
+//   for (let i = 0; i < GRID_HEIGHT; ++i) {
+//     for (let j = 0; j < GRID_WIDTH; ++j) {
+//       if (board1[i][j] !== board2[i][j]) {
+//       }
+//     }
+//   }
+// };
 
 export const handleKeyDown = (event, board, state) => {
   const { key } = event;
@@ -154,6 +180,9 @@ export const handleKeyDown = (event, board, state) => {
     state.gameOver
   )
     return;
+
+  // Deep copy TODO: erase if not needed
+  // const boardCopy = board.map((row) => row.slice());
 
   if (key == "ArrowUp") {
     transposeMatrix(board);

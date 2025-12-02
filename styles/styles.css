@@ -86,6 +86,8 @@ h1 {
   width: 80px;
   height: 80px;
   box-sizing: border-box;
+  transition: top 0.15s ease-in-out, left 0.15s ease-in-out;
+  transition: transform 0.1s ease-in-out;
 }
 
 .tile[data-value="2"] {

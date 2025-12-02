@@ -1,11 +1,30 @@
-import { printGrid, generateTile, handleKeyDown, restartGame } from "./game.js";
+import {
+  printGrid,
+  generateTile,
+  handleKeyDown,
+  restartGame,
+  createEmptyTile,
+} from "./game.js";
 
-const board = [
-  [2, 2, 2, 2],
-  [2, 2, 2, 2],
-  [2, 0, 0, 2],
-  [0, 0, 2, 2],
-];
+import { GRID_HEIGHT, GRID_WIDTH } from "./variables.js";
+
+// const board = [
+//   [2, 2, 2, 2],
+//   [2, 2, 2, 2],
+//   [2, 0, 0, 2],
+//   [0, 0, 2, 2],
+// ];
+
+// Instead of having numbers in the matrix, each element should be a tile object like: [
+//   {value: 2, id: 'A', previousPos: {r: 0, c: 0}, mergedFrom: null},
+//   {value: 4, id: 'B', previousPos: {r: 0, c: 2}, mergedFrom: null},
+//   {value: 0, ...},
+//   {value: 0, ...}
+// ]
+
+const board = Array(GRID_HEIGHT)
+  .fill(0)
+  .map(() => Array(GRID_WIDTH).fill(0).map(createEmptyTile));
 
 let state = { score: 0, gameOver: false };
 
