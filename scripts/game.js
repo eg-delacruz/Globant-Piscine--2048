@@ -1,20 +1,30 @@
-import { GRID_HEIGHT, GRID_WIDTH, CELL_SIZE, GAP_SIZE } from "./variables.js";
+import {
+  GRID_HEIGHT,
+  GRID_WIDTH,
+  CELL_SIZE,
+  GAP_SIZE,
+  getNextTileId,
+  tileId,
+} from "./variables.js";
 import { getRandomArrElem, mirrorMatrix, transposeMatrix } from "./utils.js";
 
 export const createEmptyTile = () => ({
   value: 0,
-  id: null, // Empty tiles don't need a unique ID
-  previousPos: null,
+  previousPos: { r: -1, c: -1 },
   mergedFrom: null,
-  isNew: false, // Useful flag for rendering
+  moved: false,
+  id: null,
+  game_won: false,
 });
 
 const setTilePosition = (tile, row, col) => {
   const x = col * (CELL_SIZE + GAP_SIZE);
   const y = row * (CELL_SIZE + GAP_SIZE);
 
-  tile.style.left = `${x}px`;
-  tile.style.top = `${y}px`;
+  // tile.style.left = `${x}px`;
+  // tile.style.top = `${y}px`;
+
+  tile.style.transform = `translate(${x}px, ${y}px)`;
 };
 
 export const printGrid = (board, score) => {
@@ -42,6 +52,7 @@ export const printGrid = (board, score) => {
       if (board[i][j].value === 0) continue;
       const div = document.createElement("div");
       div.className = "tile";
+      div.id = board[i][j].id;
       grid_container.append(div);
       div.setAttribute("data-value", board[i][j].value);
       setTilePosition(div, i, j);
@@ -73,7 +84,7 @@ export const generateTile = (board) => {
     const value = Math.random() < 0.9 ? 2 : 4;
     board[random_cell[0]][random_cell[1]] = {
       value: value,
-      id: `tile_${Date.now()}`, // Unique ID based on timestamp
+      id: getNextTileId(),
       previousPos: null,
       mergedFrom: null,
       isNew: true,
@@ -97,29 +108,49 @@ export const restartGame = (board, state) => {
 };
 
 // Row should go from where the move starts
-const compressRow = (row, rowIndex) => {
+// coordinates: could have the row or column index depending on the move direction
+// The value that is null shuld be set inside compressRow
+const compressRow = (row, coordinates, track_coordinates, key_value) => {
+  const old_row = [...row];
   const non_zeros = [];
+  const temp_row = [];
 
   for (let i = 0; i < row.length; ++i) {
     if (row[i].value !== 0) {
       const tileObject = row[i];
-      tileObject.previousPos = { r: rowIndex, c: i };
 
+      if (track_coordinates) {
+        let cell_coordinates;
+
+        if (key_value === "ArrowLeft") {
+          cell_coordinates = { r: coordinates.r, c: i };
+        } else if (key_value === "ArrowRight") {
+          cell_coordinates = { r: coordinates.r, c: row.length - 1 - i };
+        } else if (key_value === "ArrowUp") {
+          cell_coordinates = { r: i, c: coordinates.c };
+        } else if (key_value === "ArrowDown") {
+          cell_coordinates = { r: row.length - 1 - i, c: coordinates.c };
+        }
+
+        tileObject.previousPos = cell_coordinates;
+      }
       non_zeros.push(tileObject);
     }
   }
 
-  for (let j = 0; j < non_zeros.length; ++j) {
-    row[j] = non_zeros[j];
-  }
+  const newRow = [
+    ...non_zeros,
+    ...Array(row.length - non_zeros.length).fill(createEmptyTile()),
+  ];
 
-  for (let k = non_zeros.length; k < row.length; k++) {
-    row[k] = createEmptyTile();
+  for (let i = 0; i < row.length; i++) {
+    if (track_coordinates && newRow[i] !== old_row[i]) newRow[i].moved = true;
+    row[i] = newRow[i];
   }
 };
 
-const mergeRow = (row, state, rowIndex) => {
-  compressRow(row, rowIndex);
+const mergeRow = (row, state, coordinates, key_value) => {
+  compressRow(row, coordinates, true, key_value);
 
   for (let i = 0; i < row.length - 1; i++) {
     if (row[i].value !== 0 && row[i].value === row[i + 1].value) {
@@ -136,7 +167,7 @@ const mergeRow = (row, state, rowIndex) => {
     }
   }
 
-  compressRow(row, rowIndex);
+  compressRow(row, coordinates, false, key_value);
 };
 
 const canMerge = (board) => {
@@ -157,6 +188,31 @@ const canMerge = (board) => {
   return false;
 };
 
+// Find all tiles that moved and animate them to their new position
+const animateMove = (board) => {
+  for (let i = 0; i < GRID_HEIGHT; ++i) {
+    for (let j = 0; j < GRID_WIDTH; ++j) {
+      const tile = board[i][j];
+      const tile_div = document.getElementById(tile.id);
+      if (
+        tile.moved &&
+        tile_div &&
+        tile.previousPos.r !== -1 &&
+        tile.previousPos.c !== -1
+      ) {
+        tile_div.style.transition = "none";
+        setTilePosition(tile_div, tile.previousPos.r, tile.previousPos.c);
+        tile_div.offsetHeight;
+        tile_div.style.transition =
+          "top 0.15s ease-in-out, left 0.15s ease-in-out";
+        setTilePosition(tile_div, i, j);
+        tile.moved = false;
+        tile.previousPos = { r: -1, c: -1 };
+      }
+    }
+  }
+};
+
 const checkGameOver = (board, state) => {
   let isBoardFull = true;
 
@@ -169,7 +225,17 @@ const checkGameOver = (board, state) => {
   if (isBoardFull && !canMerge(board)) state.gameOver = true;
 };
 
-// TODO: where should I update the isNew flag to false after rendering?
+const checkGameWon = (board, state) => {
+  for (let i = 0; i < GRID_HEIGHT; ++i) {
+    for (let j = 0; j < GRID_WIDTH; ++j) {
+      if (board[i][j].value === 2048) {
+        state.game_won = true;
+        return;
+      }
+    }
+  }
+};
+
 export const handleKeyDown = (event, board, state) => {
   const { key } = event;
 
@@ -183,42 +249,37 @@ export const handleKeyDown = (event, board, state) => {
   )
     return;
 
-  if (key == "ArrowUp") {
-    transposeMatrix(board);
-
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
-
-    transposeMatrix(board);
-  } else if (key == "ArrowDown") {
-    // Transpose matrix
-    transposeMatrix(board);
-
-    // Mirror matrix
-    mirrorMatrix(board);
-
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
-
-    // Mirror matrix back
-    mirrorMatrix(board);
-
-    // Transpose matrix back
-    transposeMatrix(board);
-  } else if (key == "ArrowLeft") {
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
-  } else if (key == "ArrowRight") {
-    // Mirror matrix
-    mirrorMatrix(board);
-
-    for (let i = 0; i < GRID_WIDTH; ++i) mergeRow(board[i], state, i);
-
-    // Mirror matrix back
-    mirrorMatrix(board);
+  switch (key) {
+    case "ArrowUp":
+      transposeMatrix(board);
+      for (let i = 0; i < GRID_WIDTH; ++i)
+        mergeRow(board[i], state, { r: -1, c: i }, key);
+      transposeMatrix(board);
+      break;
+    case "ArrowDown":
+      transposeMatrix(board);
+      mirrorMatrix(board);
+      for (let i = 0; i < GRID_WIDTH; ++i)
+        mergeRow(board[i], state, { r: -1, c: i }, key);
+      mirrorMatrix(board);
+      transposeMatrix(board);
+      break;
+    case "ArrowLeft":
+      for (let i = 0; i < GRID_WIDTH; ++i)
+        mergeRow(board[i], state, { r: i, c: -1 }, key);
+      break;
+    case "ArrowRight":
+      mirrorMatrix(board);
+      for (let i = 0; i < GRID_WIDTH; ++i)
+        mergeRow(board[i], state, { r: i, c: -1 }, key);
+      mirrorMatrix(board);
+      break;
   }
 
+  animateMove(board);
   generateTile(board);
-
-  console.log(board);
   printGrid(board, state.score);
-  checkGameOver(board, state);
+  checkGameWon(board, state);
+  if (!state.game_won) checkGameOver(board, state);
   if (state.gameOver) printGameOver(state.score);
 };
