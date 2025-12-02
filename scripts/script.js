@@ -1,10 +1,10 @@
 import { printGrid, generateTile, handleKeyDown, restartGame } from "./game.js";
 
 const board = [
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
+  [2, 2, 2, 2],
+  [2, 2, 2, 2],
+  [2, 0, 0, 2],
+  [0, 0, 2, 2],
 ];
 
 let state = { score: 0, gameOver: false };

@@ -63,6 +63,13 @@ h1 {
   gap: 10px;
   grid-template-columns: repeat(4, 80px);
   grid-auto-rows: 80px;
+  position: relative;
+}
+
+.bg-tile
+{
+  background-color: var(--light-accent);
+  border: none;
 }
 
 .tile {
@@ -75,11 +82,10 @@ h1 {
   justify-content: center;
   align-items: center;
   text-align: center;
-}
-
-.tile[data-value="0"] {
-  background-color: var(--light-accent);
-  border: none;
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  box-sizing: border-box;
 }
 
 .tile[data-value="2"] {

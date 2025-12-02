@@ -1,5 +1,13 @@
-import { GRID_HEIGHT, GRID_WIDTH } from "./variables.js";
+import { GRID_HEIGHT, GRID_WIDTH, CELL_SIZE, GAP_SIZE } from "./variables.js";
 import { getRandomArrElem, mirrorMatrix, transposeMatrix } from "./utils.js";
+
+const setTilePosition = (tile, row, col) => {
+  const x = col * (CELL_SIZE + GAP_SIZE);
+  const y = row * (CELL_SIZE + GAP_SIZE);
+
+  tile.style.left = `${x}px`;
+  tile.style.top = `${y}px`;
+};
 
 export const printGrid = (board, score) => {
   const grid_container = document.getElementById("grid-container");
@@ -11,13 +19,25 @@ export const printGrid = (board, score) => {
   // Set updated score
   score_span.innerHTML = score;
 
+  // Render background grid
   for (let i = 0; i < GRID_HEIGHT; ++i) {
     for (let j = 0; j < GRID_WIDTH; ++j) {
+      const div = document.createElement("div");
+      div.className = "bg-tile";
+      grid_container.append(div);
+    }
+  }
+
+  // Render tiles with values
+  for (let i = 0; i < GRID_HEIGHT; ++i) {
+    for (let j = 0; j < GRID_WIDTH; ++j) {
+      if (board[i][j] === 0) continue;
       const div = document.createElement("div");
       div.id = `tile_${i}_${j}`;
       div.className = "tile";
       grid_container.append(div);
       div.setAttribute("data-value", board[i][j]);
+      setTilePosition(div, i, j);
       if (board[i][j] != 0) div.textContent = board[i][j];
       else div.textContent = "";
     }
