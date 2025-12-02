@@ -14,10 +14,6 @@ The 2048 game is a single-player sliding block puzzle. The goal is to slide numb
 
 - **Core Game Logic:** Complete implementation of tile spawning, sliding (Compress), and merging.
 - **Move Handling:** Efficient handling of all four directions (Up, Down, Left, Right) using **matrix transposition** and **mirroring** to simplify the core logic.
-- **Animation Engine:** Smooth visual feedback for the player using CSS transitions and keyframes, including:
-  - **Tile Sliding:** Tiles animate smoothly to their new positions using absolute positioning.
-  - **Merging:** Tiles "pop" briefly upon merging to emphasize score increases.
-  - **Spawning:** New tiles fade/scale into the grid.
 - **Game State Management:** Logic to detect the game-over condition (board full and no valid merges).
 - **Data Structure:** The game state is managed using a $4 \times 4$ array of **objects** to efficiently track tile values, unique IDs, and previous coordinates (`previousPos`, `mergedFrom` metadata) required for animation.
 
