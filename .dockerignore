@@ -1,0 +1,13 @@
+.git
+.gitignore
+.vscode
+.idea
+node_modules
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+*.log
+*.tmp
+*.swp
+.DS_Store
+docker-compose.yml

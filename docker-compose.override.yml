@@ -1,0 +1,10 @@
+# Development configuration override
+# This file is automatically merged with docker-compose.yml when running: docker compose up
+# It adds a bind mount so file changes are reflected immediately without rebuilding
+
+services:
+  2048-game:
+    volumes:
+      # Mount the current directory (game files) into the Nginx web directory inside the container.
+      # Any change to the game files will instantly be reflected in the running container.
+      - .:/usr/share/nginx/html:ro

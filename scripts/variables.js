@@ -7,3 +7,9 @@ export let tileId = 0;
 export const getNextTileId = () => {
   return `tile_${tileId++}`;
 };
+
+//////////////////// New code (start) ////////////////////
+
+export const TOTAL_CELLS = GRID_HEIGHT * GRID_WIDTH;
+
+//////////////////// New code (end) ////////////////////

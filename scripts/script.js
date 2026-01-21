@@ -1,34 +1,37 @@
-import {
-  printGrid,
-  generateTile,
-  handleKeyDown,
-  restartGame,
-  createEmptyTile,
-} from "./game.js";
+import { restartGame } from './game.js';
 
-import { GRID_HEIGHT, GRID_WIDTH, tileId } from "./variables.js";
+import { GRID_HEIGHT, GRID_WIDTH } from './variables.js';
 
-const board = Array(GRID_HEIGHT)
-  .fill(0)
-  .map(() => Array(GRID_WIDTH).fill(0).map(createEmptyTile));
+import { grid } from './game.js';
 
-let state = { score: 0, gameOver: false, game_won: false };
-
-generateTile(board);
-generateTile(board);
-
-printGrid(board, state.score);
+grid.init();
 
 // Event listeners
-document.addEventListener("keydown", (event) =>
-  handleKeyDown(event, board, state)
-);
+document.addEventListener('keydown', ({ key }) => {
+  let direction = null;
 
-const reset_btn = document.getElementById("restart-btn");
-reset_btn.addEventListener("click", () => restartGame(board, state));
+  if (key === 'ArrowUp') {
+    direction = 'UP';
+  } else if (key === 'ArrowRight') {
+    direction = 'RIGHT';
+  } else if (key === 'ArrowDown') {
+    direction = 'DOWN';
+  } else if (key === 'ArrowLeft') {
+    direction = 'LEFT';
+  }
 
-const reset_btn_2 = document.getElementById("restart-btn-2");
-reset_btn_2.addEventListener("click", () => restartGame(board, state));
+  if (direction !== null) {
+    grid.slide(direction);
+  }
 
-const reset_btn_3 = document.getElementById("restart-btn-3");
-reset_btn_3.addEventListener("click", () => restartGame(board, state));
+  return false;
+});
+
+const reset_btn = document.getElementById('restart-btn');
+reset_btn.addEventListener('click', () => restartGame(board, state));
+
+const reset_btn_2 = document.getElementById('restart-btn-2');
+reset_btn_2.addEventListener('click', () => restartGame(board, state));
+
+const reset_btn_3 = document.getElementById('restart-btn-3');
+reset_btn_3.addEventListener('click', () => restartGame(board, state));

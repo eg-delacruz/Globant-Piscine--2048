@@ -1,14 +1,23 @@
-version: '3.8' # docker-compose version
+# Production configuration
+# Usage:
+#   Production: docker compose -f docker-compose.yml up -d
+#   Development: docker compose up -d (automatically merges with docker-compose.override.yml)
 
 services:
   2048-game: # Service name
     build: . # Look for a Dockerfile in the current directory
-    container_name: 2048-game-container
     ports:
       - "2048:80"
-    restart: always # Optional: ensure the container restarts if it fails
-    volumes:
-      # Mount the current directory (game files) into the Nginx web directory inside the container.
-      # during development: any change to the game files will instantly
-      # be reflected in the running container (may need to refresh the browser).
-      - .:/usr/share/nginx/html:ro
+    restart: unless-stopped # Always restart the container unless it is explicitly stopped
+    read_only: true # Make the container filesystem read-only for better security
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/ || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    tmpfs:
+      # Provide writable tmpfs mounts for nginx runtime dirs when using read_only: true
+      - /var/cache/nginx:uid=101,gid=101
+      - /var/run/nginx:uid=101,gid=101
+      - /tmp:uid=101,gid=101

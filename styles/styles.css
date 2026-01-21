@@ -52,94 +52,94 @@ h1 {
 }
 
 .grid-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-top: 60px;
+  /* Maintain aspect ratio 1:1 on every viewport size */
+  width: 70vmin;
+  height: 70vmin;
+  margin: 0 auto;
+  background-color: var(--background-color);
 }
 
 .grid-container {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(4, 80px);
-  grid-auto-rows: 80px;
+  width: 100%;
   position: relative;
 }
 
-.bg-tile
-{
+.cell {
+  width: 15vmin;
+  height: 15vmin;
+  margin: 2vmin 2vmin 0 0;
   background-color: var(--light-accent);
-  border: none;
-  z-index: 1;
+  float: left;
+}
+/* add left margin to first childs of rows */
+.cell:nth-child(4n + 1) {
+  margin-left: 2vmin;
 }
 
-.tile {
+.number {
   position: absolute;
-  z-index: 2;
-
-  width: 80px;
-  height: 80px;
+  height: 15vmin;
+  width: 15vmin;
+  font-size: 5vmin;
+  font-weight: bold;
+  text-align: center;
+  line-height: 15vmin;
+  background-color: var(--tile_2);
+  /* Smooth transition for all properties */
+  transition: all 0.3s;
   border-radius: 6px;
   border: 6px solid black;
   box-sizing: border-box;
-
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 32px;
-  font-weight: bold;
-
-  background-color: var(--tile_2);
-
-  transition: transform 0.15s ease-in-out;
-  will-change: transform;
 }
 
-.tile[data-value="2"] {
+.number[data-value='2'] {
   background-color: var(--tile_2);
 }
 
-.tile[data-value="4"] {
+.number[data-value='4'] {
   background-color: var(--tile_4);
 }
 
-.tile[data-value="8"] {
+.number[data-value='8'] {
   background-color: var(--tile_8);
 }
 
-.tile[data-value="16"] {
+.number[data-value='16'] {
   background-color: var(--tile_16);
 }
 
-.tile[data-value="32"] {
+.number[data-value='32'] {
   background-color: var(--tile_32);
 }
 
-.tile[data-value="64"] {
+.number[data-value='64'] {
   background-color: var(--tile_64);
 }
 
-.tile[data-value="128"] {
+.number[data-value='128'] {
   background-color: var(--tile_128);
 }
 
-.tile[data-value="256"] {
+.number[data-value='256'] {
   background-color: var(--tile_256);
   color: var(--white);
 }
 
-.tile[data-value="512"] {
+.number[data-value='512'] {
   background-color: var(--tile_512);
   color: var(--white);
 }
 
-.tile[data-value="1024"] {
+.number[data-value='1024'] {
   background-color: var(--tile_1024);
   color: var(--white);
   font-size: 24px;
 }
 
-.tile[data-value="2048"] {
+.number[data-value='2048'] {
   background-color: var(--tile_2048);
   color: var(--white);
   font-size: 24px;
@@ -172,8 +172,7 @@ h1 {
   text-align: center;
 }
 
-.game_won_container
-{
+.game_won_container {
   display: none;
   position: absolute;
   top: 0;
@@ -188,8 +187,7 @@ h1 {
   font-weight: bold;
 }
 
-.game_won_container.show
-{
+.game_won_container.show {
   display: flex;
 }
 

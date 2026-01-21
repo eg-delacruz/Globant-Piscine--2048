@@ -4,9 +4,8 @@ import {
   CELL_SIZE,
   GAP_SIZE,
   getNextTileId,
-  tileId,
-} from "./variables.js";
-import { getRandomArrElem, mirrorMatrix, transposeMatrix } from "./utils.js";
+} from './variables.js';
+import { getRandomArrElem, mirrorMatrix, transposeMatrix } from './utils.js';
 
 export const createEmptyTile = () => ({
   value: 0,
@@ -27,11 +26,11 @@ const setTilePosition = (tile, row, col) => {
 };
 
 export const printGrid = (board, score) => {
-  const grid_container = document.getElementById("grid-container");
-  const score_span = document.getElementById("score");
+  const grid_container = document.getElementById('grid-container');
+  const score_span = document.getElementById('score');
 
   // Clear previous grid
-  grid_container.innerHTML = "";
+  grid_container.innerHTML = '';
 
   // Set updated score
   score_span.innerHTML = score;
@@ -39,8 +38,8 @@ export const printGrid = (board, score) => {
   // Render background grid
   for (let i = 0; i < GRID_HEIGHT; ++i) {
     for (let j = 0; j < GRID_WIDTH; ++j) {
-      const div = document.createElement("div");
-      div.className = "bg-tile";
+      const div = document.createElement('div');
+      div.className = 'bg-tile';
       grid_container.append(div);
     }
   }
@@ -49,29 +48,29 @@ export const printGrid = (board, score) => {
   for (let i = 0; i < GRID_HEIGHT; ++i) {
     for (let j = 0; j < GRID_WIDTH; ++j) {
       if (board[i][j].value === 0) continue;
-      const div = document.createElement("div");
-      div.className = "tile";
+      const div = document.createElement('div');
+      div.className = 'tile';
       div.id = board[i][j].id;
       grid_container.append(div);
-      div.setAttribute("data-value", board[i][j].value);
+      div.setAttribute('data-value', board[i][j].value);
       setTilePosition(div, i, j);
       if (board[i][j].value != 0) div.textContent = board[i][j].value;
-      else div.textContent = "";
+      else div.textContent = '';
     }
   }
 };
 
 const printGameOver = (score) => {
-  const game_over_container = document.querySelector(".game_over_container");
-  game_over_container.classList.add("show");
-  const final_score_span = document.getElementById("final-score");
+  const game_over_container = document.querySelector('.game_over_container');
+  game_over_container.classList.add('show');
+  const final_score_span = document.getElementById('final-score');
   final_score_span.textContent = score;
 };
 
 const printGameWon = (score) => {
-  const game_won_container = document.querySelector(".game_won_container");
-  game_won_container.classList.add("show");
-  const final_score_span = document.getElementById("won-score");
+  const game_won_container = document.querySelector('.game_won_container');
+  game_won_container.classList.add('show');
+  const final_score_span = document.getElementById('won-score');
   final_score_span.textContent = score;
 };
 
@@ -109,10 +108,10 @@ export const restartGame = (board, state) => {
   generateTile(board);
   generateTile(board);
   printGrid(board, state.score);
-  const game_over_container = document.querySelector(".game_over_container");
-  game_over_container.classList.remove("show");
-  const game_won_container = document.querySelector(".game_won_container");
-  game_won_container.classList.remove("show");
+  const game_over_container = document.querySelector('.game_over_container');
+  game_over_container.classList.remove('show');
+  const game_won_container = document.querySelector('.game_won_container');
+  game_won_container.classList.remove('show');
 };
 
 // Row should go from where the move starts
@@ -130,13 +129,13 @@ const compressRow = (row, coordinates, track_coordinates, key_value) => {
       if (track_coordinates) {
         let cell_coordinates;
 
-        if (key_value === "ArrowLeft") {
+        if (key_value === 'ArrowLeft') {
           cell_coordinates = { r: coordinates.r, c: i };
-        } else if (key_value === "ArrowRight") {
+        } else if (key_value === 'ArrowRight') {
           cell_coordinates = { r: coordinates.r, c: row.length - 1 - i };
-        } else if (key_value === "ArrowUp") {
+        } else if (key_value === 'ArrowUp') {
           cell_coordinates = { r: i, c: coordinates.c };
-        } else if (key_value === "ArrowDown") {
+        } else if (key_value === 'ArrowDown') {
           cell_coordinates = { r: row.length - 1 - i, c: coordinates.c };
         }
 
@@ -208,11 +207,11 @@ const animateMove = (board) => {
         tile.previousPos.r !== -1 &&
         tile.previousPos.c !== -1
       ) {
-        tile_div.style.transition = "none";
+        tile_div.style.transition = 'none';
         setTilePosition(tile_div, tile.previousPos.r, tile.previousPos.c);
         tile_div.offsetHeight;
         tile_div.style.transition =
-          "top 0.15s ease-in-out, left 0.15s ease-in-out";
+          'top 0.15s ease-in-out, left 0.15s ease-in-out';
         setTilePosition(tile_div, i, j);
         tile.moved = false;
         tile.previousPos = { r: -1, c: -1 };
@@ -249,22 +248,22 @@ export const handleKeyDown = (event, board, state) => {
 
   // Return in case key is not any of the four allowed keys
   if (
-    (key != "ArrowUp" &&
-      key != "ArrowDown" &&
-      key != "ArrowLeft" &&
-      key != "ArrowRight") ||
+    (key != 'ArrowUp' &&
+      key != 'ArrowDown' &&
+      key != 'ArrowLeft' &&
+      key != 'ArrowRight') ||
     state.gameOver
   )
     return;
 
   switch (key) {
-    case "ArrowUp":
+    case 'ArrowUp':
       transposeMatrix(board);
       for (let i = 0; i < GRID_WIDTH; ++i)
         mergeRow(board[i], state, { r: -1, c: i }, key);
       transposeMatrix(board);
       break;
-    case "ArrowDown":
+    case 'ArrowDown':
       transposeMatrix(board);
       mirrorMatrix(board);
       for (let i = 0; i < GRID_WIDTH; ++i)
@@ -272,11 +271,11 @@ export const handleKeyDown = (event, board, state) => {
       mirrorMatrix(board);
       transposeMatrix(board);
       break;
-    case "ArrowLeft":
+    case 'ArrowLeft':
       for (let i = 0; i < GRID_WIDTH; ++i)
         mergeRow(board[i], state, { r: i, c: -1 }, key);
       break;
-    case "ArrowRight":
+    case 'ArrowRight':
       mirrorMatrix(board);
       for (let i = 0; i < GRID_WIDTH; ++i)
         mergeRow(board[i], state, { r: i, c: -1 }, key);
@@ -294,3 +293,135 @@ export const handleKeyDown = (event, board, state) => {
     if (state.gameOver) printGameOver(state.score);
   }
 };
+
+//////////////////// New code (start) ////////////////////
+
+import { TOTAL_CELLS } from './variables.js';
+import { number } from './number.js';
+
+export const grid = {
+  gridElem: document.getElementsByClassName('grid-container')[0],
+  cells: [],
+  playable: false,
+  score: 0,
+  gameOver: false,
+  gameWon: false,
+  // First row/column indexes for each direction
+  directionRoots: {
+    UP: [1, 2, 3, 4],
+    DOWN: [13, 14, 15, 16],
+    LEFT: [1, 5, 9, 13],
+    RIGHT: [4, 8, 12, 16],
+  },
+  init: function () {
+    // Create div cell elements in grid container
+    for (let i = 0; i < TOTAL_CELLS; ++i) {
+      const cellDiv = document.createElement('div');
+      cellDiv.className = 'cell';
+      this.gridElem.append(cellDiv);
+    }
+    const cellElements = document.getElementsByClassName('cell');
+    let cellIndex = 1;
+    for (let cellElement of cellElements) {
+      this.cells[cellIndex] = {
+        element: cellElement, //Stores the cell DOM element
+        top: cellElement.offsetTop, // position relative to grid
+        left: cellElement.offsetLeft, // position relative to grid
+        number: null, // Will store the number DOM element that will be placed on this cell
+      };
+      cellIndex++;
+    }
+    // spawn first numbers and start game
+    number.spawn();
+    number.spawn();
+    this.playable = true;
+  },
+  randomEmptyCellIndex: function () {
+    let emptyCells = [];
+
+    for (let i = 1; i < this.cells.length; i++) {
+      if (this.cells[i].number === null) {
+        emptyCells.push(i);
+      }
+    }
+
+    if (emptyCells.length === 0) {
+      // no empty cell, game over
+      return false;
+    }
+
+    return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  },
+  slide: function (direction) {
+    if (!this.playable) {
+      return false;
+    }
+
+    // set playable to false to prevent continous slides
+    this.playable = false;
+
+    // get direction's grid root indexes
+    const roots = this.directionRoots[direction];
+
+    // indexes increments or decrements depend on direction
+    let increment = direction === 'RIGHT' || direction === 'DOWN' ? -1 : 1;
+
+    // indexes moves by
+    increment *= direction === 'UP' || direction === 'DOWN' ? 4 : 1;
+
+    // start loop with root index
+    for (let i = 0; i < roots.length; i++) {
+      const root = roots[i];
+
+      // increment or decrement through grid from root
+      // j starts from 1 bc no need to check root cell
+      for (let j = 1; j < 4; j++) {
+        const cellIndex = root + j * increment;
+        const cell = this.cells[cellIndex];
+
+        if (cell.number !== null) {
+          let moveToCell = null;
+
+          // check if cells below(to root) this cell is empty or has same number
+          // to decide to move or stay
+          // k starts from j-1 first cell below j
+          // k ends by 0 which is root cell
+          for (let k = j - 1; k >= 0; k--) {
+            const foreCellIndex = root + k * increment;
+            const foreCell = this.cells[foreCellIndex];
+
+            if (foreCell.number === null) {
+              // the cell is empty, move to and check next cell
+              moveToCell = foreCell;
+            } else if (
+              cell.number.dataset.value === foreCell.number.dataset.value
+            ) {
+              // the cell has same number, move, merge and stop
+              moveToCell = foreCell;
+              break;
+            } else {
+              // next cell is not empty and not same with moving number(number is possibly changing, cell is not)
+              // number can't go further
+              break;
+            }
+          }
+
+          if (moveToCell !== null) {
+            number.moveTo(cell, moveToCell);
+          }
+        }
+      }
+    }
+
+    // spawn a new number and make game playable
+    setTimeout(function () {
+      if (number.spawn()) {
+        grid.playable = true;
+      } else {
+        alert('GAME OVER!');
+      }
+    }, 500);
+  },
+};
+
+//////////////////// New code (end) ////////////////////

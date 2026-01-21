@@ -50,7 +50,7 @@ docker compose up -d
 
 ### 3. Access the Game in Your Browser
 
-Open your web browser and navigate to `http://localhost:8080` to access the 2048 game.
+Open your web browser and navigate to `http://localhost:2048` to access the 2048 game.
 
 The game should load, and you can start playing immediately!
 
