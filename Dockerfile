@@ -12,7 +12,13 @@ RUN mkdir -p /var/cache/nginx /var/run/nginx /etc/nginx/conf.d \
     && sed -i 's|^pid .*|pid /var/run/nginx/nginx.pid;|' /etc/nginx/nginx.conf \
     && sed -i 's/^user .*/# user disabled (running as nginx);/' /etc/nginx/nginx.conf
 
+# Copy entrypoint script
+COPY --chown=nginx:nginx entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Drop privileges after setup
 USER nginx
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 80
