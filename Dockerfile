@@ -25,3 +25,5 @@ USER nginx
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 80
+
+EXPOSE 80
