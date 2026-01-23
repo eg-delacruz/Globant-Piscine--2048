@@ -1,7 +1,3 @@
-export const restartGame = () => {
-  // TODO: In the end, erase this function, since not the restart game should be a part of grid object
-};
-
 import { TOTAL_CELLS } from './variables.js';
 import { number } from './number.js';
 
@@ -13,6 +9,7 @@ export const grid = {
   score: 0,
   gameOver: false,
   gameWon: false,
+
   // First row/column indexes for each direction
   directionRoots: {
     UP: [1, 2, 3, 4],
@@ -64,7 +61,6 @@ export const grid = {
     return emptyCells[Math.floor(Math.random() * emptyCells.length)];
   },
 
-  // TODO: check how we access the value of a number to change it so that I can apply the same logic to the score value
   slide: function (direction) {
     if (!this.playable) {
       return false;
@@ -83,11 +79,13 @@ export const grid = {
     increment *= direction === 'UP' || direction === 'DOWN' ? 4 : 1;
 
     // start loop with root index
+    // i loops through each root
     for (let i = 0; i < roots.length; i++) {
       const root = roots[i];
 
       // increment or decrement through grid from root
       // j starts from 1 bc no need to check root cell
+      // J and k are used to check cells relative to root
       for (let j = 1; j < 4; j++) {
         const cellIndex = root + j * increment;
         const cell = this.cells[cellIndex];
@@ -109,7 +107,7 @@ export const grid = {
             } else if (
               cell.number.dataset.value === foreCell.number.dataset.value
             ) {
-              // the cell has same number, move, merge and stop
+              // the cell has same number, move, merge and stop to prevent further merges in one slide
               moveToCell = foreCell;
               break;
             } else {
@@ -126,13 +124,72 @@ export const grid = {
       }
     }
 
+    // Update score display
+    const scoreElem = document.getElementById('score');
+    scoreElem.innerText = this.score;
+
+    // Won game check (user reaches 2048 number)
+    if (!this.gameWon) {
+      for (let i = 1; i < this.cells.length; i++) {
+        const cell = this.cells[i];
+        if (cell.number !== null && cell.number.dataset.value == 2048) {
+          this.gameWon = true;
+          this.playable = false;
+
+          const game_won_modal = document.querySelector('.game_won_container');
+          game_won_modal.classList.add('show');
+          const final_score_elem = document.getElementById('won-score');
+          final_score_elem.innerText = this.score;
+          break;
+        }
+      }
+    }
+
     // spawn a new number and make game playable
     setTimeout(function () {
       if (number.spawn()) {
         grid.playable = true;
       } else {
-        alert('GAME OVER!');
+        const game_over_modal = document.querySelector('.game_over_container');
+        game_over_modal.classList.add('show');
+        grid.gameOver = true;
+
+        const scoreElem = document.getElementById('final-score');
+        scoreElem.innerText = grid.score;
       }
     }, 500);
+  },
+
+  restart: function () {
+    // Remove all number elements from grid
+    for (let i = 1; i < this.cells.length; i++) {
+      const cell = this.cells[i];
+      if (cell.number !== null) {
+        this.gridElem.removeChild(cell.number);
+        cell.number = null;
+      }
+    }
+
+    // reset attributes
+    this.playable = false;
+    this.score = 0;
+    this.gameOver = false;
+    this.gameWon = false;
+
+    // spawn first numbers and start game
+    number.spawn();
+    number.spawn();
+    this.playable = true;
+
+    // reset score display
+    const scoreElem = document.getElementById('score');
+    scoreElem.innerText = this.score;
+
+    // hide modals
+    const game_over_modal = document.querySelector('.game_over_container');
+    game_over_modal.classList.remove('show');
+
+    const game_won_modal = document.querySelector('.game_won_container');
+    game_won_modal.classList.remove('show');
   },
 };

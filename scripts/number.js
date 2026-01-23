@@ -1,16 +1,6 @@
 import { grid } from './game.js';
 
 export const number = {
-  // numbers: [],
-  // Get all number DOM elements and store in numbers array
-  // getElements: function () {
-  //   const numberElements = document.getElementsByClassName('number');
-
-  //   for (let numberElement of numberElements) {
-  //     this.numbers.push(numberElement);
-  //   }
-  // },
-
   spawn: function () {
     const emptyCellIndex = grid.randomEmptyCellIndex();
 
@@ -35,6 +25,7 @@ export const number = {
     return true;
   },
 
+  // Move number from one cell to another
   moveTo: function (fromCell, toCell) {
     const number = fromCell.number;
 
@@ -62,6 +53,9 @@ export const number = {
       const newNumberValue = toCell.number.dataset.value * 2;
       toCell.number.dataset.value = newNumberValue;
       toCell.number.innerText = newNumberValue;
+
+      // update score
+      grid.score += newNumberValue;
 
       fromCell.number = null;
     }

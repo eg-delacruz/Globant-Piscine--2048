@@ -1,5 +1,3 @@
-import { restartGame } from './game.js';
-
 import { grid } from './game.js';
 
 grid.init();
@@ -18,7 +16,7 @@ document.addEventListener('keydown', ({ key }) => {
     direction = 'LEFT';
   }
 
-  if (direction !== null) {
+  if (direction !== null && grid.playable && !grid.gameOver && !grid.gameWon) {
     grid.slide(direction);
   }
 
@@ -26,10 +24,10 @@ document.addEventListener('keydown', ({ key }) => {
 });
 
 const reset_btn = document.getElementById('restart-btn');
-reset_btn.addEventListener('click', () => restartGame());
+reset_btn.addEventListener('click', () => grid.restart());
 
 const reset_btn_2 = document.getElementById('restart-btn-2');
-reset_btn_2.addEventListener('click', () => restartGame());
+reset_btn_2.addEventListener('click', () => grid.restart());
 
 const reset_btn_3 = document.getElementById('restart-btn-3');
-reset_btn_3.addEventListener('click', () => restartGame());
+reset_btn_3.addEventListener('click', () => grid.restart());
